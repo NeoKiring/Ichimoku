@@ -4,8 +4,8 @@ GUIコンポーネント間で共通の機能を提供
 """
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
-from PyQt6.QtWidgets import QMessageBox, QWidget
-from PyQt6.QtCore import QDateTime
+from PySide6.QtWidgets import QMessageBox, QWidget
+from PySide6.QtCore import QDateTime
 from typing import List, Dict, Any, Optional, Tuple, Union
 
 class ColorScheme:

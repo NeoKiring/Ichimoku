@@ -5,12 +5,12 @@
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QScrollArea, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QSplitter, QFrame, QGridLayout, QToolBar, QComboBox, QSpinBox
 )
-from PyQt6.QtCore import Qt, QRect, QDate, QRectF, QSize, QPoint, pyqtSignal
-from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QWheelEvent, QMouseEvent, QPaintEvent
+from PySide6.QtCore import Qt, QRect, QDate, QRectF, QSize, QPoint, Signal
+from PySide6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QWheelEvent, QMouseEvent, QPaintEvent
 
 from ...models import ProjectStatus, TaskStatus
 
@@ -20,7 +20,7 @@ class GanttChartWidget(QWidget):
     プロジェクトのガントチャートを表示するウィジェット
     """
     
-    item_clicked = pyqtSignal(str, str)  # 項目がクリックされたときのシグナル (タイプ, ID)
+    item_clicked = Signal(str, str)  # 項目がクリックされたときのシグナル (タイプ, ID)
     
     def __init__(self, parent=None):
         """

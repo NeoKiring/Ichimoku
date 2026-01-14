@@ -4,12 +4,12 @@
 Excelダイアログ
 Excel入出力のためのダイアログ
 """
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QFileDialog, QRadioButton, QButtonGroup, QGroupBox,
     QMessageBox, QComboBox, QCheckBox
 )
-from PyQt6.QtCore import Qt
+from PySide6.QtCore import Qt
 
 # 相対パスを使用する場合
 from ...excel.excel_importer import ExcelImporter

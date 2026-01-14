@@ -4,12 +4,12 @@
 """
 from typing import Dict, Any, List, Optional
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QToolBar, QFrame, QSplitter, QScrollArea, QSpinBox
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QSize
-from PyQt6.QtGui import QIcon, QAction
+from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtGui import QIcon, QAction
 
 from .gantt_chart_widget import GanttChartWidget
 from .utils import show_error_message, show_info_message
@@ -425,7 +425,7 @@ class GanttChartTab(QWidget):
             return
         
         # スケジュール調整ダイアログを表示（将来実装予定）
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QDialogButtonBox, QDateEdit
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QDialogButtonBox, QDateEdit
         
         dialog = QDialog(self)
         dialog.setWindowTitle("スケジュール調整")

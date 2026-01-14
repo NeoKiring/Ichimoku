@@ -73,7 +73,7 @@ def main():
         except ImportError as e:
             print(f"GUIモードの起動に失敗しました: {str(e)}")
             print("必要なパッケージがインストールされていない可能性があります。")
-            print("PyQt6をインストールしてください: pip install PyQt6")
+            print("PySide6をインストールしてください: pip install PySide6")
             return 1
     
     # CLIを実行

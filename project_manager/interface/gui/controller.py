@@ -5,7 +5,7 @@ GUIとProjectManager間の連携を担当
 from typing import List, Dict, Any, Optional, Callable
 from datetime import datetime
 
-from PyQt6.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 
 from ...core.manager import get_project_manager
 from ...models import ProjectStatus, TaskStatus
@@ -17,10 +17,10 @@ class GUIController(QObject):
     """
     
     # モデル変更通知用シグナル
-    project_changed = pyqtSignal()
-    phases_changed = pyqtSignal()
-    processes_changed = pyqtSignal(str)  # フェーズIDをパラメータとして渡す
-    tasks_changed = pyqtSignal(str, str)  # フェーズID, プロセスIDをパラメータとして渡す
+    project_changed = Signal()
+    phases_changed = Signal()
+    processes_changed = Signal(str)  # フェーズIDをパラメータとして渡す
+    tasks_changed = Signal(str, str)  # フェーズID, プロセスIDをパラメータとして渡す
     
     def __init__(self):
         """コントローラーの初期化"""

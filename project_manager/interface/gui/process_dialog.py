@@ -5,11 +5,11 @@
 from typing import Dict, Any, Optional
 from datetime import datetime
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QLineEdit, QTextEdit,
     QDateEdit, QDoubleSpinBox, QPushButton, QDialogButtonBox, QFormLayout
 )
-from PyQt6.QtCore import Qt, QDate
+from PySide6.QtCore import Qt, QDate
 
 from .utils import datetime_to_qdatetime, qdatetime_to_datetime
 

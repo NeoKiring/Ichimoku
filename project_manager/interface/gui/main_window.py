@@ -6,14 +6,14 @@ from typing import Dict, Any, Optional, List
 import os
 from datetime import datetime
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QMainWindow, QWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
     QSplitter, QTreeWidget, QTreeWidgetItem, QProgressBar, QMenu,
     QMessageBox, QComboBox, QStatusBar, QToolBar, QApplication
 )
-from PyQt6.QtCore import Qt, QSize, pyqtSignal, QTimer
-from PyQt6.QtGui import QAction, QIcon, QColor, QFont
+from PySide6.QtCore import Qt, QSize, Signal, QTimer
+from PySide6.QtGui import QAction, QIcon, QColor, QFont
 
 from .controller import GUIController
 from .project_dialog import ProjectDialog
@@ -817,7 +817,7 @@ class MainWindow(QMainWindow):
                 return
             
             # フェーズ選択ダイアログ
-            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QComboBox, QDialogButtonBox
+            from PySide6.QtWidgets import QDialog, QVBoxLayout, QComboBox, QDialogButtonBox
             
             dialog = QDialog(self)
             dialog.setWindowTitle("フェーズ選択")
@@ -896,7 +896,7 @@ class MainWindow(QMainWindow):
                 return
             
             # フェーズとプロセスの選択ダイアログ
-            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QComboBox, QLabel, QDialogButtonBox
+            from PySide6.QtWidgets import QDialog, QVBoxLayout, QComboBox, QLabel, QDialogButtonBox
             
             dialog = QDialog(self)
             dialog.setWindowTitle("プロセス選択")

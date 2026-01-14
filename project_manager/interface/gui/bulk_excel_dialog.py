@@ -2,14 +2,14 @@
 Excel一括インポートダイアログ
 複数のExcelファイルを一括でインポートするためのダイアログ
 """
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QFileDialog, QRadioButton, QButtonGroup, QGroupBox,
     QMessageBox, QComboBox, QCheckBox, QListWidget, QListWidgetItem,
     QTableWidget, QTableWidgetItem, QHeaderView, QSplitter, QProgressBar,
     QTextEdit
 )
-from PyQt6.QtCore import Qt, QSize, pyqtSignal
+from PySide6.QtCore import Qt, QSize, Signal
 
 # 相対パスを使用する場合
 from ...excel.bulk_excel_importer import BulkExcelImporter

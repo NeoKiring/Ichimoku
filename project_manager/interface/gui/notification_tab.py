@@ -4,13 +4,13 @@
 """
 from typing import Dict, Any, List, Optional
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QTableWidget, QTableWidgetItem, QHeaderView, QComboBox,
     QCheckBox, QSpinBox, QFormLayout, QGroupBox, QMessageBox
 )
-from PyQt6.QtCore import Qt, QTimer, QSize, pyqtSignal
-from PyQt6.QtGui import QColor, QIcon, QFont
+from PySide6.QtCore import Qt, QTimer, QSize, Signal
+from PySide6.QtGui import QColor, QIcon, QFont
 
 from ...core.notification_manager import get_notification_manager
 from ...models.notification import NotificationType, NotificationPriority, Notification
@@ -23,7 +23,7 @@ class NotificationTab(QWidget):
     """
     
     # 通知が選択されたときのシグナル（プロジェクト, エンティティタイプ, エンティティID）
-    notification_selected = pyqtSignal(str, str, str)
+    notification_selected = Signal(str, str, str)
     
     def __init__(self, controller):
         """
@@ -405,7 +405,7 @@ class NotificationTab(QWidget):
     
     def delete_old_notifications(self):
         """古い通知を削除するダイアログを表示"""
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QSpinBox, QDialogButtonBox, QLabel
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QSpinBox, QDialogButtonBox, QLabel
         
         dialog = QDialog(self)
         dialog.setWindowTitle("古い通知を削除")
@@ -445,7 +445,7 @@ class NotificationTab(QWidget):
     
     def show_settings_dialog(self):
         """通知設定ダイアログを表示"""
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QSpinBox, QDialogButtonBox, QLabel, QFormLayout, QGroupBox
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QSpinBox, QDialogButtonBox, QLabel, QFormLayout, QGroupBox
         
         dialog = QDialog(self)
         dialog.setWindowTitle("通知設定")

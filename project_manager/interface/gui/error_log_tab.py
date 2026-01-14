@@ -5,14 +5,14 @@
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QDateEdit, QLineEdit, QFormLayout, QGroupBox, QTextEdit,
     QDialog, QDialogButtonBox, QCheckBox, QFileDialog, QMessageBox
 )
-from PyQt6.QtCore import Qt, QDate, QDateTime, pyqtSignal
-from PyQt6.QtGui import QColor
+from PySide6.QtCore import Qt, QDate, QDateTime, Signal
+from PySide6.QtGui import QColor
 
 from ...core.logger import get_logger, LogLevel
 from ...core.error_handler import log_exception

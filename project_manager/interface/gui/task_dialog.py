@@ -4,11 +4,11 @@
 """
 from typing import Dict, Any, Optional
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QLineEdit, QTextEdit,
     QComboBox, QPushButton, QDialogButtonBox, QFormLayout
 )
-from PyQt6.QtCore import Qt
+from PySide6.QtCore import Qt
 
 from ...models import TaskStatus
 
