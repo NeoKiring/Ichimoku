@@ -66,21 +66,21 @@ goto MENU
 cls
 echo GUIモードを起動しています...
 echo.
-echo PyQt6が必要です。インストールされていない場合はインストールされます。
+echo PySide6が必要です。インストールされていない場合はインストールされます。
 echo.
 
-REM PyQt6のチェックとインストール
-python -c "import PyQt6" >nul 2>&1
+REM PySide6のチェックとインストール
+python -c "import PySide6" >nul 2>&1
 if %errorlevel% neq 0 (
-    echo PyQt6をインストールしています...
-    pip install PyQt6 >nul
+    echo PySide6をインストールしています...
+    pip install PySide6 >nul
     if %errorlevel% neq 0 (
-        echo エラー: PyQt6のインストールに失敗しました。
-        echo 手動でインストールしてください: pip install PyQt6
+        echo エラー: PySide6のインストールに失敗しました。
+        echo 手動でインストールしてください: pip install PySide6
         pause
         goto MENU
     )
-    echo PyQt6がインストールされました。
+    echo PySide6がインストールされました。
 )
 
 echo プロジェクト管理システムを起動しています（GUIモード）...
