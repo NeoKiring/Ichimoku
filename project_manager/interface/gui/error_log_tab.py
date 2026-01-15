@@ -363,10 +363,10 @@ class ErrorLogTab(QWidget):
             # フィルター条件の取得
             level = self.level_combo.currentData()
             
-            start_date = self.start_date_edit.date().toPyDate()
+            start_date = self.start_date_edit.date().toPython()
             start_datetime = datetime.combine(start_date, datetime.min.time())
-            
-            end_date = self.end_date_edit.date().toPyDate()
+
+            end_date = self.end_date_edit.date().toPython()
             end_datetime = datetime.combine(end_date, datetime.max.time())
             
             module = self.module_combo.currentData()
