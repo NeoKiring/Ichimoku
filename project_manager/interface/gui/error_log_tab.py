@@ -206,7 +206,7 @@ class ErrorLogTab(QWidget):
     """
     
     # エラーが選択されたときのシグナル
-    error_selected = pyqtSignal(dict)
+    error_selected = Signal(dict)
     
     def __init__(self, parent=None):
         """
