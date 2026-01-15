@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
     QSplitter, QTreeWidget, QTreeWidgetItem, QProgressBar, QMenu,
-    QMessageBox, QComboBox, QStatusBar, QToolBar, QApplication
+    QMessageBox, QComboBox, QStatusBar, QToolBar, QApplication,
+    QFormLayout, QGroupBox, QFrame, QScrollArea
 )
 from PySide6.QtCore import Qt, QSize, Signal, QTimer
 from PySide6.QtGui import QAction, QIcon, QColor, QFont
@@ -410,11 +411,31 @@ class MainWindow(QMainWindow):
         self.detail_header = QLabel("詳細情報")
         self.detail_header.setFont(QFont("", 12, QFont.Weight.Bold))
         self.detail_layout.addWidget(self.detail_header)
-        
-        # 詳細情報内容
-        self.detail_content = QLabel("項目を選択してください")
-        self.detail_layout.addWidget(self.detail_content)
-        
+
+        # 詳細情報内容（コンパクトな横並びフォーム）
+        self.info_groupbox = QGroupBox()
+        self.info_groupbox.setMaximumHeight(180)  # 高さを制限してタスクテーブルのスペースを確保
+        self.info_layout = QHBoxLayout(self.info_groupbox)
+        self.info_layout.setContentsMargins(10, 10, 10, 10)
+
+        # 左列のフォーム
+        self.info_form_left = QFormLayout()
+        self.info_form_left.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow)
+        self.info_layout.addLayout(self.info_form_left)
+
+        # 右列のフォーム
+        self.info_form_right = QFormLayout()
+        self.info_form_right.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow)
+        self.info_layout.addLayout(self.info_form_right)
+
+        self.detail_layout.addWidget(self.info_groupbox)
+
+        # タスク一覧ヘッダー
+        self.tasks_header = QLabel("タスク一覧")
+        self.tasks_header.setFont(QFont("", 11, QFont.Weight.Bold))
+        self.tasks_header.setVisible(False)  # 初期状態では非表示
+        self.detail_layout.addWidget(self.tasks_header)
+
         # タスク一覧表（プロセス選択時のみ表示）
         self.tasks_table = QTableWidget()
         self.tasks_table.setColumnCount(5)
@@ -433,9 +454,11 @@ class MainWindow(QMainWindow):
 
         self.tasks_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tasks_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        self.tasks_table.setVisible(False)
-        
-        self.detail_layout.addWidget(self.tasks_table)
+        self.tasks_table.setVisible(False)  # 初期状態では非表示
+        self.tasks_table.setMinimumHeight(200)  # 最小高さを設定
+
+        # ストレッチファクターを設定して、残りのスペースを使う
+        self.detail_layout.addWidget(self.tasks_table, 1)  # ストレッチファクター1で残りスペースを使う
         
         # ボタンエリア
         self.detail_buttons_layout = QHBoxLayout()
@@ -1707,18 +1730,65 @@ class MainWindow(QMainWindow):
         if id_item:
             project_id = id_item.data(Qt.ItemDataRole.UserRole)
             self.open_project(project_id)
-    
+
+    def clear_detail_form(self):
+        """詳細情報フォームをクリア"""
+        # 左列をクリア
+        while self.info_form_left.count() > 0:
+            item = self.info_form_left.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # 右列をクリア
+        while self.info_form_right.count() > 0:
+            item = self.info_form_right.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # info_layoutに直接追加された履歴ラベルなどをクリア
+        # フォームレイアウト（インデックス0と1）以外のアイテムを削除
+        while self.info_layout.count() > 2:
+            item = self.info_layout.takeAt(2)
+            if item.widget():
+                item.widget().deleteLater()
+
+    def update_detail_form(self, data_dict):
+        """詳細情報フォームを更新
+
+        Args:
+            data_dict: 表示するデータの辞書 {"ラベル": "値", ...}
+        """
+        self.clear_detail_form()
+
+        items = list(data_dict.items())
+        mid_point = (len(items) + 1) // 2
+
+        # 左列に前半を追加
+        for i, (label, value) in enumerate(items[:mid_point]):
+            value_label = QLabel(str(value))
+            value_label.setWordWrap(True)
+            value_label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+            self.info_form_left.addRow(f"<b>{label}:</b>", value_label)
+
+        # 右列に後半を追加
+        for i, (label, value) in enumerate(items[mid_point:]):
+            value_label = QLabel(str(value))
+            value_label.setWordWrap(True)
+            value_label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+            self.info_form_right.addRow(f"<b>{label}:</b>", value_label)
+
     def on_tree_selection_changed(self):
         """ツリーの選択変更時の処理"""
         current_item = self.get_selected_tree_item()
-        
+
         if not current_item:
             self.edit_detail_button.setEnabled(False)
             self.delete_detail_button.setEnabled(False)
             self.add_child_button.setEnabled(False)
             self.tasks_table.setVisible(False)
+            self.tasks_header.setVisible(False)
             self.detail_header.setText("詳細情報")
-            self.detail_content.setText("項目を選択してください")
+            self.clear_detail_form()
             return
         
         item_type, item_id = self.get_item_type_and_id(current_item)
@@ -1729,20 +1799,21 @@ class MainWindow(QMainWindow):
             phase_data = self.controller.get_phase_details(item_id)
             if phase_data:
                 self.detail_header.setText(f"フェーズ: {phase_data['name']}")
-                
-                detail_text = f"""
-                <p><b>ID:</b> {phase_data['id']}</p>
-                <p><b>説明:</b> {phase_data['description']}</p>
-                <p><b>進捗率:</b> {format_progress(phase_data['progress'])}</p>
-                <p><b>開始日:</b> {format_date(phase_data['start_date'])}</p>
-                <p><b>終了日:</b> {format_date(phase_data['end_date'])}</p>
-                <p><b>作成日時:</b> {phase_data['created_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                <p><b>更新日時:</b> {phase_data['updated_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                """
-                
-                self.detail_content.setText(detail_text)
+
+                detail_dict = {
+                    "ID": phase_data['id'][:12] + "...",
+                    "説明": phase_data['description'] or "なし",
+                    "進捗率": format_progress(phase_data['progress']),
+                    "開始日": format_date(phase_data['start_date']),
+                    "終了日": format_date(phase_data['end_date']),
+                    "作成日時": phase_data['created_at'].strftime('%Y-%m-%d %H:%M'),
+                    "更新日時": phase_data['updated_at'].strftime('%Y-%m-%d %H:%M')
+                }
+
+                self.update_detail_form(detail_dict)
                 self.tasks_table.setVisible(False)
-            
+                self.tasks_header.setVisible(False)
+
             # ボタンの有効化
             self.edit_detail_button.setEnabled(True)
             self.delete_detail_button.setEnabled(True)
@@ -1753,27 +1824,28 @@ class MainWindow(QMainWindow):
             # プロセスの詳細表示
             phase_id = current_item.parent().data(0, Qt.ItemDataRole.UserRole)
             process_data = self.controller.get_process_details(phase_id, item_id)
-            
+
             if process_data:
                 self.detail_header.setText(f"プロセス: {process_data['name']}")
-                
-                detail_text = f"""
-                <p><b>ID:</b> {process_data['id']}</p>
-                <p><b>説明:</b> {process_data['description']}</p>
-                <p><b>担当者:</b> {process_data['assignee'] or '未割当'}</p>
-                <p><b>進捗率:</b> {format_progress(process_data['progress'])}</p>
-                <p><b>開始日:</b> {format_date(process_data['start_date'])}</p>
-                <p><b>終了日:</b> {format_date(process_data['end_date'])}</p>
-                <p><b>予想工数:</b> {format_hours(process_data['estimated_hours'])}</p>
-                <p><b>実工数:</b> {format_hours(process_data['actual_hours'])}</p>
-                <p><b>作成日時:</b> {process_data['created_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                <p><b>更新日時:</b> {process_data['updated_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                """
-                
-                self.detail_content.setText(detail_text)
-                
+
+                detail_dict = {
+                    "ID": process_data['id'][:12] + "...",
+                    "説明": process_data['description'] or "なし",
+                    "担当者": process_data['assignee'] or '未割当',
+                    "進捗率": format_progress(process_data['progress']),
+                    "開始日": format_date(process_data['start_date']),
+                    "終了日": format_date(process_data['end_date']),
+                    "予想工数": format_hours(process_data['estimated_hours']),
+                    "実工数": format_hours(process_data['actual_hours']),
+                    "作成日時": process_data['created_at'].strftime('%Y-%m-%d %H:%M'),
+                    "更新日時": process_data['updated_at'].strftime('%Y-%m-%d %H:%M')
+                }
+
+                self.update_detail_form(detail_dict)
+
                 # タスク一覧を表示
                 self.tasks_table.setVisible(True)
+                self.tasks_header.setVisible(True)
                 self.controller.set_current_process(phase_id, item_id)
             
             # ボタンの有効化
@@ -1787,45 +1859,52 @@ class MainWindow(QMainWindow):
             process_id = current_item.parent().data(0, Qt.ItemDataRole.UserRole)
             phase_id = current_item.parent().parent().data(0, Qt.ItemDataRole.UserRole)
             task_data = self.controller.get_task_details(phase_id, process_id, item_id)
-            
+
             if task_data:
                 self.detail_header.setText(f"タスク: {task_data['name']}")
-                
-                detail_text = f"""
-                <p><b>ID:</b> {task_data['id']}</p>
-                <p><b>説明:</b> {task_data['description']}</p>
-                <p><b>状態:</b> <span style="color: {get_status_color(task_data['status'])}">{task_data['status']}</span></p>
-                <p><b>作成日時:</b> {task_data['created_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                <p><b>更新日時:</b> {task_data['updated_at'].strftime('%Y-%m-%d %H:%M')}</p>
-                """
-                
-                # タスク履歴を追加
+
+                # 基本情報
+                detail_dict = {
+                    "ID": task_data['id'][:12] + "...",
+                    "説明": task_data['description'] or "なし",
+                    "状態": task_data['status'],
+                    "作成日時": task_data['created_at'].strftime('%Y-%m-%d %H:%M'),
+                    "更新日時": task_data['updated_at'].strftime('%Y-%m-%d %H:%M')
+                }
+
+                self.update_detail_form(detail_dict)
+
+                # 履歴がある場合は、フォーム下に追加表示
                 history = self.controller.get_task_history(item_id)
-                if history:
-                    detail_text += "<p><b>履歴:</b></p><ul>"
-                    for entry in history:
+                if history and len(history) > 0:
+                    history_text = "<b>履歴:</b><ul style='margin-top:5px;'>"
+                    for entry in history[:5]:  # 最新5件のみ表示
                         timestamp = datetime.fromisoformat(entry["timestamp"]).strftime("%Y-%m-%d %H:%M")
                         action = entry["action_type"]
-                        
+
                         history_item = f"<li>{timestamp} - {action}"
-                        
+
                         if "details" in entry and "status" in entry["details"]:
                             status_change = entry["details"]["status"]
                             if isinstance(status_change, dict) and 'old' in status_change and 'new' in status_change:
-                                # 辞書型の場合（想定していた形式）
                                 history_item += f" (状態変更: {status_change['old']} → {status_change['new']})"
                             else:
-                                # 文字列型の場合
                                 history_item += f" (状態変更: {status_change})"
-                                
+
                         history_item += "</li>"
-                        detail_text += history_item
-                    
-                    detail_text += "</ul>"
-                
-                self.detail_content.setText(detail_text)
+                        history_text += history_item
+
+                    history_text += "</ul>"
+
+                    # 履歴ラベルを追加
+                    history_label = QLabel(history_text)
+                    history_label.setWordWrap(True)
+                    history_label.setTextFormat(Qt.TextFormat.RichText)
+                    self.info_layout.addWidget(history_label)
+
                 self.tasks_table.setVisible(False)
-            
+                self.tasks_header.setVisible(False)
+
             # ボタンの有効化
             self.edit_detail_button.setEnabled(True)
             self.delete_detail_button.setEnabled(True)
