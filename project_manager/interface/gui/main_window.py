@@ -69,7 +69,8 @@ class MainWindow(QMainWindow):
         """UIの初期化"""
         # ウィンドウの設定
         self.setWindowTitle("プロジェクト管理システム")
-        self.setMinimumSize(1000, 700)
+        self.setMinimumSize(1280, 800)
+        self.resize(1400, 900)  # デフォルトサイズを設定
         
         # 中央ウィジェット
         central_widget = QWidget()
@@ -114,12 +115,7 @@ class MainWindow(QMainWindow):
 
         # タブ切り替え時の処理
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
-        
-        main_layout.addWidget(self.tab_widget)
 
-        # タブ切り替え時の処理
-        self.tab_widget.currentChanged.connect(self.on_tab_changed)
-        
         main_layout.addWidget(self.tab_widget)
 
     def init_menu(self):
@@ -329,13 +325,13 @@ class MainWindow(QMainWindow):
         self.projects_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.projects_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
-        # 初期列幅を設定
-        self.projects_table.setColumnWidth(0, 100)  # ID
-        self.projects_table.setColumnWidth(1, 250)  # 名前
-        self.projects_table.setColumnWidth(2, 100)  # 状態
+        # 初期列幅を設定（合計: 1200px）
+        self.projects_table.setColumnWidth(0, 120)  # ID
+        self.projects_table.setColumnWidth(1, 350)  # 名前
+        self.projects_table.setColumnWidth(2, 120)  # 状態
         self.projects_table.setColumnWidth(3, 100)  # 進捗率
-        self.projects_table.setColumnWidth(4, 150)  # 更新日時
-        self.projects_table.setColumnWidth(5, 200)  # 操作
+        self.projects_table.setColumnWidth(4, 180)  # 更新日時
+        self.projects_table.setColumnWidth(5, 230)  # 操作
 
         self.projects_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.projects_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -397,7 +393,10 @@ class MainWindow(QMainWindow):
         # 左側: フェーズツリー
         self.phases_tree = QTreeWidget()
         self.phases_tree.setHeaderLabels(["フェーズ/プロセス/タスク", "進捗", "担当者", "状態"])
-        self.phases_tree.setColumnWidth(0, 300)
+        self.phases_tree.setColumnWidth(0, 250)
+        self.phases_tree.setColumnWidth(1, 80)   # 進捗
+        self.phases_tree.setColumnWidth(2, 100)  # 担当者
+        self.phases_tree.setColumnWidth(3, 70)   # 状態
         self.phases_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.phases_tree.customContextMenuRequested.connect(self.show_tree_context_menu)
         self.phases_tree.itemSelectionChanged.connect(self.on_tree_selection_changed)
@@ -425,9 +424,9 @@ class MainWindow(QMainWindow):
         self.tasks_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.tasks_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
-        # 初期列幅を設定
-        self.tasks_table.setColumnWidth(0, 80)   # ID
-        self.tasks_table.setColumnWidth(1, 200)  # 名前
+        # 初期列幅を設定（合計: 750px）
+        self.tasks_table.setColumnWidth(0, 100)  # ID
+        self.tasks_table.setColumnWidth(1, 250)  # 名前
         self.tasks_table.setColumnWidth(2, 100)  # 状態
         self.tasks_table.setColumnWidth(3, 150)  # 更新日時
         self.tasks_table.setColumnWidth(4, 150)  # 操作
@@ -466,10 +465,10 @@ class MainWindow(QMainWindow):
         self.add_child_button.setEnabled(False)
         
         splitter.addWidget(self.detail_widget)
-        
-        # スプリッターの初期サイズ比率設定
-        splitter.setSizes([400, 600])
-        
+
+        # スプリッターの初期サイズ比率設定（ウィンドウサイズ拡大に合わせて調整）
+        splitter.setSizes([500, 800])
+
         layout.addWidget(splitter)
     
     def setup_all_processes_tab(self):
@@ -538,16 +537,16 @@ class MainWindow(QMainWindow):
         self.processes_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.processes_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
-        # 初期列幅を設定
-        self.processes_table.setColumnWidth(0, 150)  # プロジェクト
-        self.processes_table.setColumnWidth(1, 150)  # フェーズ
+        # 初期列幅を設定（合計: 1200px）
+        self.processes_table.setColumnWidth(0, 140)  # プロジェクト
+        self.processes_table.setColumnWidth(1, 130)  # フェーズ
         self.processes_table.setColumnWidth(2, 200)  # プロセス名
         self.processes_table.setColumnWidth(3, 100)  # 担当者
         self.processes_table.setColumnWidth(4, 80)   # 進捗率
-        self.processes_table.setColumnWidth(5, 100)  # 開始日
-        self.processes_table.setColumnWidth(6, 100)  # 終了日
-        self.processes_table.setColumnWidth(7, 80)   # 残り日数
-        self.processes_table.setColumnWidth(8, 150)  # 操作
+        self.processes_table.setColumnWidth(5, 110)  # 開始日
+        self.processes_table.setColumnWidth(6, 110)  # 終了日
+        self.processes_table.setColumnWidth(7, 100)  # 残り日数
+        self.processes_table.setColumnWidth(8, 180)  # 操作
 
         self.processes_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.processes_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -1689,11 +1688,17 @@ class MainWindow(QMainWindow):
         elif index == 1:  # プロジェクト詳細タブ
             self.refresh_project_view()
             self.refresh_phases_view()
-        elif isinstance(self.tab_widget.widget(index), GanttChartTab):  # ここに追加
-            # ガントチャートタブが選択された場合、ガントチャートを更新
-            self.gantt_chart_tab.refresh_gantt_chart()
-        elif index == 3:  # 全プロセスタブ（追加）
+        elif index == 2:  # ガントチャートタブ
+            if hasattr(self, 'gantt_chart_tab'):
+                self.gantt_chart_tab.refresh_gantt_chart()
+        elif index == 3:  # 全プロセスタブ
             self.refresh_all_processes()
+        elif index == 4:  # エラーログタブ
+            if hasattr(self, 'error_log_tab'):
+                self.error_log_tab.load_error_logs()
+        elif index == 5:  # 通知タブ
+            if hasattr(self, 'notification_tab'):
+                self.notification_tab.load_notifications()
 
     
     def on_project_double_clicked(self, row: int, col: int):
